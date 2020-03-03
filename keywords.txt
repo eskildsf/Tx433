@@ -1,3 +1,0 @@
-Tx433	KEYWORD1
-Device_On	KEYWORD2
-Device_Off	KEYWORD2

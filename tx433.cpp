@@ -22,28 +22,26 @@ extern "C" {
 }
 
 #define RETRANSMIT  5
-
 const int Tx433::pulse_high = 250;
 const int Tx433::pulse_one_low = 250;
 const int Tx433::pulse_zero_low = 1250;
 const int Tx433::pulse_sync_low = 2500;
 const int Tx433::pulse_pause_low = 10000;
 
-String Tx433::GrpOn="01";
-String Tx433::GrpOff="10";
-String Tx433::On="01";
-String Tx433::Off="10";
-String Tx433::Unit[] = {
-		"0101",
-		"0110",
-		"1001",
-		"0101"
-	};
+byte Tx433::GROUP_ON = B01;
+byte Tx433::GROUP_OFF = B10;
+byte Tx433::ON = B01;
+byte Tx433::OFF = B10;
+byte Tx433::UNIT[] = {
+    B0101,
+    B0110,
+    B1001,
+    B0101
+};
 
 /* Public */
 
-Tx433::Tx433(int digitalpin, String transmittercode, String channelcode)
-{
+Tx433::Tx433(byte digitalpin, byte transmittercode, byte channelcode) {
 	txpin = digitalpin;
 	pinMode(txpin, OUTPUT);
 
@@ -51,61 +49,62 @@ Tx433::Tx433(int digitalpin, String transmittercode, String channelcode)
 	ChCode = channelcode;
 }
 
-void Tx433::Device_On(int dev)
-{
-	if (dev >= 3) {
-		sendPackets(GrpOn, Unit[3], On);
-	} else
-		sendPackets(GrpOff, Unit[dev], On);
+void Tx433::On(byte dev) {
+	if ( dev >= 3 ) {
+		sendPackets(GROUP_ON, UNIT[3], ON);
+	} else {
+		sendPackets(GROUP_OFF, UNIT[dev], ON);
+	}
 }	  
 
-void Tx433::Device_Off(int dev)
-{
+void Tx433::Off(byte dev) {
 	if (dev >= 3) {
-		sendPackets(GrpOn, Unit[3], Off);
-	} else
-		sendPackets(GrpOff, Unit[dev], Off);
+		sendPackets(GROUP_ON, UNIT[3], OFF);
+	} else {
+		sendPackets(GROUP_OFF, UNIT[dev], OFF);
+    	}
 }	  
 
-int Tx433::Get_txpin(void)
-{
+byte Tx433::Get_txpin(void) {
 	return txpin;
 }
 
-String Tx433::Get_TxCode(void)
-{
-		return TxCode;
+byte Tx433::Get_TxCode(void) {
+	return TxCode;
 }	  
 
-String Tx433::Get_ChCode(void)
-{
-		return ChCode;
+byte Tx433::Get_ChCode(void) {
+	return ChCode;
 }	  
 
 /* Private */
 
 // Protocol layer
-void Tx433::sendCode(String str, int len) {
-  int i = 0;
-  while (i <= len) {
-    if (str.charAt(i) == '0') {
+void Tx433::sendCode(byte str, byte len) {
+  for ( byte i = 0; i < len; i++ ) {
+    byte a = str&(1<<(len-1-i));
+    if ( a == 0 ) {
       sendZero();
-    }
-    if (str.charAt(i)== '1') {
+    } else {
       sendOne();
     }
-    i++;
   }
 }
 
-void Tx433::sendPackets(String grp, String dev, String onoff) {
-  for (int i = 0; i < RETRANSMIT; i++) {
+void Tx433::sendPackets(byte grp, byte dev, byte onoff) {
+  for ( byte i = 0; i < RETRANSMIT; i++ ) {
 	  sendSync();
-	  sendCode(TxCode, TxCode.length());
-	  sendCode(grp, grp.length());
-	  sendCode(onoff, onoff.length());
-	  sendCode(ChCode, ChCode.length());
-	  sendCode(dev, dev.length());
+	  sendCode(B11111111, 8);
+	  sendCode(B11111111, 8);
+	  sendCode(B11111111, 8);
+	  sendCode(B11111111, 8);
+	  sendCode(B11111111, 8);
+	  sendCode(B1111, 4);
+	  sendCode(TxCode, 8);
+	  sendCode(grp, 2);
+	  sendCode(onoff, 2);
+	  sendCode(ChCode, 4);
+	  sendCode(dev, 4);
 	  sendPause();
   }
 }

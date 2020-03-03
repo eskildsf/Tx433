@@ -31,36 +31,36 @@ class Tx433
 	@transmittercode - the unique code of the transmitter (26/52 bits)
 	@channelcode - the channel code (2/4 bits)
 	*/
-	Tx433(int digitalpin, String transmittercode, String channelcode);
+	Tx433(byte digitalpin, byte transmittercode, byte channelcode);
 
 	/*
 	@unit - the device to turn on. 
 		0,1,2 are the three separate devices.
 		3 is the complete group.
 	*/
-	void Device_On(int unit);	  
+	void On(byte unit);	  
 
 	/*
 	@unit - the device to turn off. 
 		0,1,2 are the three separate devices.
 		3 is the complete group.
 	*/
-	void Device_Off(int unit);	  
+	void Off(byte unit);	  
 
-	int Get_txpin(void);
-  String Get_TxCode(void);
-  String Get_ChCode(void);
+	byte Get_txpin(void);
+    byte Get_TxCode(void);
+    byte Get_ChCode(void);
 
   private:
-	int txpin;
+	byte txpin;
 	
-	String TxCode;
-	String ChCode;
-	static String GrpOn;
-	static String GrpOff;
-	static String On;
-	static String Off;
-	static String Unit[];
+	byte TxCode;
+	byte ChCode;
+	static byte GROUP_ON;
+	static byte GROUP_OFF;
+	static byte ON;
+	static byte OFF;
+	static byte UNIT[];
 
 	const static int pulse_high;
 	const static int pulse_one_low;
@@ -69,8 +69,8 @@ class Tx433
 	const static int pulse_pause_low;
   
 	// Protocol layer
-	void sendCode(String str, int len);
-	void sendPackets(String grp, String dev, String onoff);
+	void sendCode(byte str, byte len);
+	void sendPackets(byte grp, byte dev, byte onoff);
 
 	// Physical layer interfaces
 	void sendZero(void);
