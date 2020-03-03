@@ -1,4 +1,4 @@
-# Arduino library to use Proove/Anslut/Telldus 433MHz sockets
+ Arduino library to use Proove/Anslut/Telldus 433MHz sockets
 
 Clone of [Joakim Wesslen's Tx433](https://github.com/JoakimWesslen/Tx433) which uses less memory and flash allowing it to run on Attiny85 as well as Arduino.
 Example uses 1426 bytes of flash and 12 bytes of global variables.
